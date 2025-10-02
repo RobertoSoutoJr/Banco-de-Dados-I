@@ -1,0 +1,63 @@
+SELECT * FROM vendas_itens2;
+
+SELECT
+    venda_id,
+    ROUND(SUM(quantidade * valor_unitario)::numeric, 2) AS total_vendas
+FROM
+    vendas_itens2
+GROUP BY
+    venda_id
+ORDER BY
+    total_vendas;
+
+SELECT 
+    ROUND(AVG(total_vendas)::NUMERIC,2) AS media_vendas
+FROM
+    (SELECT
+        venda_id,
+        SUM(quantidade * valor_unitario) AS total_vendas
+    FROM
+        vendas_itens2
+    GROUP BY
+        venda_id) AS total_vendas;
+
+SELECT
+    ROUND(AVG(total_vendas)::NUMERIC,2) AS media_vendas,
+    ROUND (MIN(total_vendas)::NUMERIC,2) AS venda_minima,
+    ROUND (MAX(total_vendas)::NUMERIC,2) AS venda_maxima
+FROM
+    (SELECT
+        venda_id,
+        SUM(quantidade * valor_unitario) AS total_vendas
+    FROM
+        vendas_itens2
+    GROUP BY
+        venda_id) AS total_vendas;
+
+
+
+SELECT
+    venda_id,
+    total_vendas
+FROM (
+    SELECT
+        venda_id,
+        ROUND(SUM(quantidade * valor_unitario), 2) AS total_vendas
+    FROM
+        vendas_itens2
+    GROUP BY
+        venda_id
+) AS vendas_totais
+WHERE
+    total_vendas = (
+        SELECT
+            MIN(total_vendas)
+        FROM (
+            SELECT
+                ROUND(SUM(quantidade * valor_unitario), 2) AS total_vendas
+            FROM
+                vendas_itens2
+            GROUP BY
+                venda_id
+        ) AS vendas_totais_minimas
+    );
