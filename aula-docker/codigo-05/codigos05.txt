@@ -61,3 +61,34 @@ WHERE
                 venda_id
         ) AS vendas_totais_minimas
     );
+
+
+
+    -- ACHANDO O MAIOR
+SELECT
+    venda_id,
+    SUM(quantidade * valor_unitario) AS total_venda,
+    data_venda
+FROM
+    vendas_itens2
+GROUP BY
+    venda_id,
+    data_venda
+ORDER BY
+    total_venda DESC
+LIMIT 1;
+
+
+-- ACHANDO O MENOR
+SELECT
+    venda_id,
+    SUM(quantidade * valor_unitario) AS total_venda,
+    data_venda
+FROM
+    vendas_itens2
+GROUP BY
+    venda_id,
+    data_venda
+ORDER BY
+    total_venda ASC
+LIMIT 1;
