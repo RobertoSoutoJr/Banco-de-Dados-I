@@ -1,0 +1,139 @@
+SELECT *
+FROM pessoa;
+
+SELECT *
+FROM paciente;
+
+SELECT 
+    p.nome,
+    pa.data_cadastro
+FROM paciente pa
+JOIN pessoa p ON p.id = pa.pessoa_id;
+
+SELECT
+    p.nome AS nome_medico,
+    m.crm,
+    e.nome AS nome_especialidade
+FROM medico m
+JOIN pessoa p ON p.id = m.pessoa_id
+JOIN especialidade e ON e.id = m.especialidade_id;
+
+
+CREATE TABLE endereco (
+    id SERIAL PRIMARY KEY,
+    logradouro VARCHAR(150) NOT NULL,
+    numero VARCHAR(10) NOT NULL,
+    complemento VARCHAR(50),
+    bairro VARCHAR(80) NOT NULL,
+    cidade VARCHAR(100) NOT NULL,
+    uf CHAR(2) NOT NULL,
+    cep CHAR(8) NOT NULL
+);
+
+SELECT * FROM pessoa
+
+CREATE TABLE endereco (
+    id SERIAL PRIMARY KEY,
+    logradouro VARCHAR(150) NOT NULL,
+    numero VARCHAR(10) NOT NULL,
+    complemento VARCHAR(50),
+    bairro VARCHAR(80) NOT NULL,
+    cidade VARCHAR(100) NOT NULL,
+    uf CHAR(2) NOT NULL,
+    cep CHAR(8) NOT NULL
+);
+
+ALTER TABLE pessoa
+ADD COLUMN endereco_id INT,
+ADD CONSTRAINT fk_pessoa_endereco
+    FOREIGN KEY (endereco_id) REFERENCES endereco(id)
+    ON DELETE SET NULL;
+
+
+-- 1️⃣ Criar um endereço
+INSERT INTO endereco (logradouro, numero, bairro, cidade, uf, cep)
+VALUES ('Av. Brasil', '500', 'Centro', 'Rio de Janeiro', 'RJ', '20040000')
+RETURNING id;
+
+SELECT * FROM pessoa;
+
+ALTER TABLE pessoa
+    DROP COLUMN logradouro,
+    DROP COLUMN numero,
+    DROP COLUMN complemento,
+    DROP COLUMN bairro,
+    DROP COLUMN cidade,
+    DROP COLUMN uf,
+    DROP COLUMN cep;
+
+SELECT p.nome, e.logradouro, e.numero 
+FROM pessoa p 
+JOIN endereco e 
+ON p.endereco_id = e.id;
+
+INSERT INTO endereco (logradouro, numero, complemento, bairro, cidade, uf, cep) VALUES
+('Rua das Flores', '101', 'Casa', 'Centro', 'São Paulo', 'SP', '01001000'),
+('Av. Brasil', '202', 'Apto 12', 'Copacabana', 'Rio de Janeiro', 'RJ', '22021000'),
+('Rua das Palmeiras', '33', NULL, 'Boa Viagem', 'Recife', 'PE', '51021000'),
+('Rua Santa Clara', '500', 'Bloco B', 'Centro', 'Belo Horizonte', 'MG', '30140000'),
+('Av. Independência', '77', NULL, 'Centro', 'Porto Alegre', 'RS', '90035900'),
+('Rua XV de Novembro', '12', 'Sala 3', 'Centro', 'Curitiba', 'PR', '80020010'),
+('Rua Dom Pedro II', '89', 'Casa 2', 'Centro', 'Fortaleza', 'CE', '60060000'),
+('Av. das Américas', '1500', 'Loja 5', 'Barra', 'Rio de Janeiro', 'RJ', '22775001'),
+('Rua Goiás', '444', NULL, 'Funcionários', 'Belo Horizonte', 'MG', '30130000'),
+('Rua da Praia', '88', NULL, 'Centro', 'Salvador', 'BA', '40015000'),
+('Av. Paulista', '900', 'Conjunto 1001', 'Bela Vista', 'São Paulo', 'SP', '01311000'),
+('Rua do Sol', '25', NULL, 'Centro', 'Maceió', 'AL', '57020000'),
+('Av. João Pessoa', '410', NULL, 'Centro', 'Porto Alegre', 'RS', '90040000'),
+('Rua Afonso Pena', '155', NULL, 'Centro', 'Campo Grande', 'MS', '79002000'),
+('Av. Goiás', '320', 'Apto 7', 'Setor Central', 'Goiânia', 'GO', '74005000'),
+('Rua Maranhão', '200', NULL, 'Centro', 'Natal', 'RN', '59020000'),
+('Av. Beira-Mar', '700', NULL, 'Meireles', 'Fortaleza', 'CE', '60165000'),
+('Rua José Bonifácio', '12', NULL, 'Centro', 'Cuiabá', 'MT', '78005100'),
+('Rua das Oliveiras', '321', NULL, 'Centro', 'Florianópolis', 'SC', '88010000'),
+('Av. das Torres', '999', NULL, 'Tarumã', 'Curitiba', 'PR', '82820300');
+
+
+UPDATE pessoa
+SET endereco_id = (
+    SELECT id FROM endereco ORDER BY RANDOM() LIMIT 1
+)
+WHERE endereco_id IS NULL;
+
+SELECT * FROM endereco
+
+SELECT * FROM pessoa;
+
+UPDATE pessoa
+SET endereco_id = NULL
+WHERE endereco_id IS NOT NULL;
+
+WITH pessoas_sem_endereco AS (
+    SELECT id, ROW_NUMBER() OVER (ORDER BY RANDOM()) AS rn
+    FROM pessoa
+    WHERE endereco_id IS NULL
+),
+enderecos_aleatorios AS (
+    SELECT id AS endereco_id, ROW_NUMBER() OVER (ORDER BY RANDOM()) AS rn
+    FROM endereco
+)
+UPDATE pessoa p
+SET endereco_id = e.endereco_id
+FROM pessoas_sem_endereco ps
+JOIN enderecos_aleatorios e ON ps.rn = e.rn
+WHERE p.id = ps.id;
+
+SELECT * FROM pessoa
+
+
+select * from endereco;
+
+SELECT p.nome, e.logradouro, e.numero 
+FROM pessoa p 
+JOIN endereco e 
+ON p.endereco_id = e.id
+
+
+
+
+
